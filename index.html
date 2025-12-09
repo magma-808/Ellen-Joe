@@ -1,627 +1,247 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ellen Joe | Assistente Virtual IA - Zenless Zone Zero Universe</title>
-    
-    <!-- Meta Tags para SEO -->
-    <meta name="description" content="Ellen Joe - Assistente Virtual com IA DeepSeek, personalidade do universo Zenless Zone Zero. Converse sobre qualquer assunto com design neon preto e vermelho.">
-    <meta name="keywords" content="Ellen Joe, Zenless Zone Zero, IA, DeepSeek, Assistente Virtual, AI Assistant, Chatbot, ZZZ, RPG, miHoYo">
-    <meta name="author" content="Ellen Joe AI">
-    <meta property="og:title" content="Ellen Joe - Assistente Virtual Zenless Zone Zero">
-    <meta property="og:description" content="Converse com a Ellen Joe, IA completa com personalidade do universo ZZZ">
-    <meta property="og:type" content="website">
-    
-    <!-- Ícones -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
-    
-    <!-- Fontes -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    
-    <style>
-        /* ============================================
-           VARIÁVEIS CSS GLOBAIS E RESET
-           ============================================ */
-        :root {
-            /* Cores Principais - Tema Neon Preto/Vermelho */
-            --neon-red: #ff003c;
-            --neon-red-light: #ff3366;
-            --neon-red-dark: #cc0030;
-            --neon-pink: #ff00ff;
-            --neon-pink-light: #ff66ff;
-            --neon-cyan: #00ffff;
-            --neon-purple: #9d00ff;
-            
-            /* Cores de Fundo */
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --bg-card: rgba(20, 20, 20, 0.95);
-            --bg-glass: rgba(10, 10, 10, 0.85);
-            
-            /* Cores de Texto */
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --text-tertiary: #999999;
-            --text-accent: var(--neon-red);
-            
-            /* Cores de Estado */
-            --success: #00ff88;
-            --error: #ff3333;
-            --warning: #ffaa00;
-            --info: #0099ff;
-            
-            /* Efeitos Glow */
-            --glow-red: 0 0 20px rgba(255, 0, 60, 0.7);
-            --glow-pink: 0 0 20px rgba(255, 0, 255, 0.7);
-            --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.7);
-            --glow-strong: 0 0 30px rgba(255, 0, 60, 0.9);
-            
-            /* Bordas */
-            --border-primary: 2px solid rgba(255, 0, 60, 0.3);
-            --border-glow: 2px solid rgba(255, 0, 60, 0.6);
-            --border-radius: 12px;
-            --border-radius-lg: 20px;
-            --border-radius-xl: 30px;
-            
-            /* Sombras */
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
-            --shadow-neon: 0 0 40px rgba(255, 0, 60, 0.4);
-            --shadow-inset: inset 0 0 20px rgba(0, 0, 0, 0.5);
-            
-            /* Transições */
-            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Espaçamentos */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 1.5rem;
-            --spacing-lg: 2rem;
-            --spacing-xl: 3rem;
-            --spacing-xxl: 5rem;
-            
-            /* Tipografia */
-            --font-heading: 'Orbitron', sans-serif;
-            --font-body: 'Exo 2', sans-serif;
-            --font-mono: 'Share Tech Mono', monospace;
-            --font-tech: 'Rajdhani', sans-serif;
-            
-            /* Z-index */
-            --z-background: -10;
-            --z-normal: 1;
-            --z-tooltip: 100;
-            --z-modal: 1000;
-            --z-notification: 2000;
-        }
-        
-        /* ============================================
-           RESET E CONFIGURAÇÕES GLOBAIS
-           ============================================ */
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-        
-        body {
-            font-family: var(--font-body);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(255, 0, 60, 0.1) 0%, transparent 25%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 25%),
-                radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 50%);
-            z-index: -2;
-            pointer-events: none;
-        }
-        
-        /* Efeito de grade sutil */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 0, 60, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 60, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-        
-        /* ============================================
-           TIPOGRAFIA
-           ============================================ */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: var(--spacing-md);
-            letter-spacing: 1px;
-        }
-        
-        h1 {
-            font-size: 3.5rem;
-            background: linear-gradient(45deg, var(--neon-red), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: var(--glow-red);
-            text-transform: uppercase;
-        }
-        
-        h2 {
-            font-size: 2.5rem;
-            color: var(--neon-red);
-            text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
-        }
-        
-        h3 {
-            font-size: 1.8rem;
-            color: var(--text-primary);
-            position: relative;
-            display: inline-block;
-        }
-        
-        h3::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 60%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--neon-red), transparent);
-            border-radius: 2px;
-        }
-        
-        p {
-            margin-bottom: var(--spacing-sm);
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-        }
-        
-        a {
-            color: var(--neon-red);
-            text-decoration: none;
-            transition: var(--transition-fast);
-            position: relative;
-        }
-        
-        a:hover {
-            color: var(--neon-pink);
-            text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
-        }
-        
-        a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--neon-red);
-            transition: var(--transition-normal);
-        }
-        
-        a:hover::after {
-            width: 100%;
-        }
-        
-        /* ============================================
-           LAYOUT PRINCIPAL
-           ============================================ */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-            width: 100%;
-        }
-        
-        .page-wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* ============================================
-           HEADER
-           ============================================ */
-        .header {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border-bottom: var(--border-primary);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: var(--spacing-sm) 0;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--spacing-sm) 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-        
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--neon-red), var(--neon-pink));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 2s infinite alternate;
-            box-shadow: var(--glow-red);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .logo-icon::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            background: radial-gradient(circle, rgba(255, 0, 60, 0.3) 0%, transparent 70%);
-            z-index: -1;
-        }
-        
-        .logo-icon i {
-            font-size: 1.8rem;
-            color: white;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .logo-title {
-            font-family: var(--font-heading);
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--neon-red), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-        }
-        
-        .logo-subtitle {
-            font-family: var(--font-tech);
-            font-size: 0.9rem;
-            color: var(--text-tertiary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: var(--spacing-lg);
-            align-items: center;
-        }
-        
-        .nav-link {
-            font-family: var(--font-tech);
-            font-weight: 600;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--border-radius);
-            transition: var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 0, 60, 0.2), transparent);
-            transition: var(--transition-normal);
-        }
-        
-        .nav-link:hover {
-            color: var(--neon-red);
-            text-shadow: 0 0 10px var(--neon-red-glow);
-        }
-        
-        .nav-link:hover::before {
-            left: 100%;
-        }
-        
-        .nav-link.active {
-            color: var(--neon-red);
-            background: rgba(255, 0, 60, 0.1);
-            border: 1px solid rgba(255, 0, 60, 0.3);
-            box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
-        }
-        
-        /* ============================================
-           MAIN CONTENT
-           ============================================ */
-        .main-content {
-            flex: 1;
-            padding: var(--spacing-xl) 0;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: var(--spacing-xl);
-            min-height: 700px;
-        }
-        
-        @media (max-width: 1200px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* ============================================
-           CHAT SECTION
-           ============================================ */
-        .chat-section {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .chat-header {
-            background: var(--bg-card);
-            border: var(--border-primary);
-            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-            padding: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .chat-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--neon-red), var(--neon-pink), var(--neon-cyan));
-            animation: shimmer 3s infinite linear;
-        }
-        
-        .assistant-avatar {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--neon-red), var(--neon-pink));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--glow-red);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .assistant-avatar::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            background: radial-gradient(circle, rgba(255, 0, 60, 0.4) 0%, transparent 70%);
-            z-index: -1;
-        }
-        
-        .assistant-avatar i {
-            font-size: 2rem;
-            color: white;
-        }
-        
-        .assistant-info {
-            flex: 1;
-        }
-        
-        .assistant-name {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            color: var(--neon-red);
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
-        }
-        
-        .assistant-status {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            font-size: 0.9rem;
-            color: var(--text-tertiary);
-        }
-        
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--success);
-            box-shadow: 0 0 10px var(--success);
-            animation: pulse 2s infinite;
-        }
-        
-        .status-indicator.offline {
-            background-color: var(--error);
-            box-shadow: 0 0 10px var(--error);
-        }
-        
-        .chat-container {
-            flex: 1;
-            background: var(--bg-card);
-            border: var(--border-primary);
-            border-top: none;
-            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
-            display: flex;
-            flex-direction: column;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: var(--spacing-md);
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-            scrollbar-width: thin;
-            scrollbar-color: var(--neon-red) var(--bg-tertiary);
-        }
-        
-        .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .chat-messages::-webkit-scrollbar-track {
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-        }
-        
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--neon-red);
-            border-radius: 4px;
-            box-shadow: var(--glow-red);
-        }
-        
-        .message {
-            max-width: 85%;
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius-lg);
-            animation: messageAppear 0.3s ease-out;
-            position: relative;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        
-        .message-user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, rgba(255, 0, 60, 0.15), rgba(255, 0, 255, 0.1));
-            border: 1px solid rgba(255, 0, 60, 0.3);
-            border-bottom-right-radius: 5px;
-        }
-        
-        .message-ai {
-            align-self: flex-start;
-            background: linear-gradient(135deg, rgba(40, 40, 60, 0.9), rgba(60, 20, 50, 0.9));
-            border: 1px solid rgba(255, 0, 60, 0.2);
-            border-bottom-left-radius: 5px;
-        }
-        
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.85rem;
-        }
-        
-        .message-sender {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-        
-        .message-user .message-sender {
-            color: var(--neon-pink);
-        }
-        
-        .message-ai .message-sender {
-            color: var(--neon-red);
-        }
-        
-        .message-time {
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-        }
-        
-        .message-content {
-            line-height: 1.6;
-            font-size: 1.05rem;
-        }
-        
-        .message-content p {
-            margin-bottom: var(--spacing-xs);
-        }
-        
-        .message-content ul, .message-content ol {
-            margin-left: var(--spacing-md);
-            margin-bottom: var(--spacing-xs);
-        }
-        
-        .message-content code {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            border: 1px solid rgba(255, 0, 60, 0.2);
-        }
-        
-        .message-content pre {
-            background: rgba(0, 0, 0, 0.4);
-            padding: var(--spacing-sm);
-            border-radius: var(--border-radius);
-            overflow-x: auto;
-            margin: var(--spacing-xs) 0;
-      
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ellen Joe | Assistente Virtual IA - Zenless Zone Zero Universe</title>
+
+  <!-- Meta Tags para SEO -->
+  <meta name="description" content="Ellen Joe - Assistente Virtual com IA DeepSeek, personalidade do universo Zenless Zone Zero. Converse sobre qualquer assunto com design neon preto e vermelho." />
+  <meta name="keywords" content="Ellen Joe, Zenless Zone Zero, IA, DeepSeek, Assistente Virtual, AI Assistant, Chatbot, ZZZ, RPG, miHoYo" />
+  <meta name="author" content="Ellen Joe AI" />
+  <meta property="og:title" content="Ellen Joe - Assistente Virtual Zenless Zone Zero" />
+  <meta property="og:description" content="Converse com a Ellen Joe, IA completa com personalidade do universo ZZZ" />
+  <meta property="og:type" content="website" />
+
+  <!-- Ícone (data-uri) -->
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
+
+  <!-- Fontes (corrigido: link completo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Animate.css (optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <style>
+    :root{
+      --neon-red:#ff003c; --neon-pink:#ff00ff; --neon-cyan:#00ffff;
+      --bg-primary:#0a0a0a; --bg-card:rgba(20,20,20,0.95);
+      --text-primary:#ffffff; --text-secondary:#cccccc; --text-tertiary:#999999;
+      --border-radius:12px; --border-radius-lg:20px;
+      --spacing-sm:1rem; --spacing-md:1.5rem; --spacing-lg:2rem;
+      --glow-red:0 0 20px rgba(255,0,60,0.7);
+      --transition-normal:all 0.3s cubic-bezier(0.4,0,0.2,1);
+      --font-heading:'Orbitron', sans-serif; --font-body:'Exo 2', sans-serif; --font-mono:'Share Tech Mono', monospace; --font-tech:'Rajdhani', sans-serif;
+    }
+
+    /* Reset */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:var(--font-body);
+      background-color:var(--bg-primary);
+      color:var(--text-primary);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.6;
+      min-height:100vh;
+      overflow:hidden;
+    }
+
+    /* Background subtle glows (non-blocking, z-index behind content) */
+    .bg-layers{
+      position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(255,0,60,0.06) 0%, transparent 18%),
+        radial-gradient(circle at 90% 85%, rgba(157,0,255,0.06) 0%, transparent 18%),
+        radial-gradient(circle at 50% 50%, rgba(0,255,255,0.03) 0%, transparent 40%);
+      opacity:1;
+    }
+
+    /* Container */
+    .container{max-width:1200px;margin:0 auto;padding:1rem;height:100%;display:flex;flex-direction:column}
+    header.header{
+      display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1rem 0;
+    }
+    .logo{display:flex;align-items:center;gap:0.75rem}
+    .logo-icon{
+      width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));box-shadow:var(--glow-red);
+    }
+    .logo-icon i{font-size:1.4rem;color:#fff}
+    .logo-title{font-family:var(--font-heading);font-size:1.25rem;background:linear-gradient(45deg,var(--neon-red),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+    /* Main area */
+    .main{
+      display:flex;flex:1;gap:1.5rem;align-items:stretch;
+      min-height:calc(100vh - 110px);
+    }
+
+    /* Chat column */
+    .chat-wrapper{
+      flex:1;display:flex;flex-direction:column;border-radius:var(--border-radius-lg);
+      background:var(--bg-card);border:1px solid rgba(255,0,60,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.5);overflow:hidden;
+    }
+
+    .chat-header{
+      padding:1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,0,60,0.05);
+    }
+    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-red)}
+    .assistant-avatar i{color:#fff;font-size:1.4rem}
+    .assistant-info{display:flex;flex-direction:column}
+    .assistant-name{font-family:var(--font-heading);color:var(--neon-red);font-size:1.05rem}
+    .assistant-status{font-size:0.85rem;color:var(--text-tertiary)}
+
+    .chat-body{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .chat-messages{
+      flex:1;padding:1rem;overflow:auto;display:flex;flex-direction:column;gap:1rem;
+    }
+
+    .message{max-width:85%;padding:0.9rem;border-radius:14px;word-wrap:break-word}
+    .message.ai{align-self:flex-start;background:linear-gradient(135deg,rgba(40,40,60,0.9),rgba(60,20,50,0.9));border:1px solid rgba(255,0,60,0.12)}
+    .message.user{align-self:flex-end;background:linear-gradient(135deg,rgba(255,0,60,0.12),rgba(255,0,255,0.06));border:1px solid rgba(255,0,60,0.2)}
+
+    .message .meta{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-tertiary);margin-bottom:0.5rem}
+    .message .content{font-size:1rem;color:var(--text-secondary);line-height:1.5}
+
+    /* Input area */
+    .chat-input{
+      display:flex;gap:0.5rem;padding:0.75rem;border-top:1px solid rgba(255,0,60,0.04);align-items:center;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);
+    }
+    .chat-input textarea{
+      resize:none;flex:1;padding:0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+      background:rgba(0,0,0,0.4);color:var(--text-primary);min-height:44px;font-size:1rem;font-family:var(--font-body);
+    }
+    .btn{
+      background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));color:#fff;border:none;padding:0.6rem 1rem;border-radius:10px;cursor:pointer;font-weight:600;
+      box-shadow:var(--glow-red);transition:var(--transition-normal);
+    }
+    .btn:active{transform:translateY(1px);}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .main{flex-direction:column;min-height:calc(100vh - 140px)}
+      .logo-title{font-size:1rem}
+      .assistant-name{font-size:1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layers" aria-hidden="true"></div>
+
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon" aria-hidden="true"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <div class="logo-title">Ellen Joe</div>
+          <div style="font-size:0.75rem;color:var(--text-tertiary);letter-spacing:1px">Assistente Virtual • Zenless Zone Zero</div>
+        </div>
+      </div>
+      <nav aria-label="Navegação">
+        <a href="#" style="color:var(--text-secondary);text-decoration:none;font-weight:600">Início</a>
+      </nav>
+    </header>
+
+    <main class="main" role="main">
+      <section class="chat-wrapper" aria-label="Área de chat">
+        <div class="chat-header">
+          <div class="assistant-avatar" aria-hidden="true"><i class="fa-solid fa-robot"></i></div>
+          <div class="assistant-info">
+            <div class="assistant-name">Ellen Joe</div>
+            <div class="assistant-status">Online • Pronta para conversar</div>
+          </div>
+        </div>
+
+        <div class="chat-body">
+          <div id="chatMessages" class="chat-messages" role="log" aria-live="polite">
+            <!-- Mensagens aparecerão aqui -->
+            <div class="message ai" id="welcomeMsg">
+              <div class="meta"><div>Assistant</div><div>agora</div></div>
+              <div class="content">Olá! Eu sou a Ellen Joe. Pergunte-me qualquer coisa ou diga "ajuda" para começar.</div>
+            </div>
+          </div>
+
+          <div class="chat-input" role="form" aria-label="Enviar mensagem">
+            <textarea id="chatInput" placeholder="Escreva uma mensagem... (Enter envia, Shift+Enter nova linha)"></textarea>
+            <button id="sendBtn" class="btn" aria-label="Enviar mensagem"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Código JS simples para tornar a interface funcional localmente
+    (function(){
+      const chatMessages = document.getElementById('chatMessages');
+      const chatInput = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
+
+      function autoScroll(){
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function formatTime(date){
+        return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
+
+      function appendMessage({who, text}){
+        const msg = document.createElement('div');
+        msg.className = 'message ' + (who === 'user' ? 'user' : 'ai');
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = '<div>' + (who === 'user' ? 'Você' : 'Ellen Joe') + '</div><div>' + formatTime(new Date()) + '</div>';
+        const content = document.createElement('div');
+        content.className = 'content';
+        // Preserve simple formatting (line breaks)
+        content.innerHTML = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        msg.appendChild(meta);
+        msg.appendChild(content);
+        chatMessages.appendChild(msg);
+        autoScroll();
+      }
+
+      // Simula resposta da IA (placeholder). Integre sua API aqui conforme necessário.
+      async function sendToAssistant(text){
+        // Exemplo: resposta automática simples
+        const lower = text.trim().toLowerCase();
+        let reply = "Desculpe, não entendi. Tente novamente.";
+        if(!lower) return;
+        if(lower.includes('olá')||lower.includes('oi')) reply = "Olá! Em que posso ajudar hoje?";
+        else if(lower.includes('ajuda')) reply = "Posso responder perguntas, contar sobre o universo ZZZ, ou simular diálogos. O que deseja?";
+        else reply = "Recebi: " + text;
+        // Simular atraso
+        await new Promise(r => setTimeout(r, 350));
+        appendMessage({who: 'ai', text: reply});
+      }
+
+      function handleSend(){
+        const text = chatInput.value;
+        if(!text.trim()) return;
+        appendMessage({who: 'user', text});
+        chatInput.value = '';
+        // Chamar função de envio / API
+        sendToAssistant(text);
+      }
+
+      sendBtn.addEventListener('click', handleSend);
+      chatInput.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          handleSend();
+        }
+      });
+
+      // Acessibilidade: foco inicial no campo de texto
+      chatInput.focus();
+      autoScroll();
+    })();
+  </script>
+</body>
+    </html>
