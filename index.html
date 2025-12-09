@@ -13,8 +13,11 @@
   <meta property="og:description" content="Converse com a Ellen Joe, IA completa com personalidade do universo ZZZ" />
   <meta property="og:type" content="website" />
 
-  <!-- Observação: não coloque chaves no cliente. O front-end chama sempre /api/ai (proxy). -->
+  <!-- Observação: não coloque chaves no cliente. O front-end chama sempre /api/ai (proxy).
+       Se desejar fallback direto (cliente -> DeepSeek), adicione a API key explicitamente.
+       Ajuste o endpoint abaixo se o endpoint real for outro. -->
   <meta name="ai-proxy-endpoint" content="/api/ai" />
+  <meta name="deepseek-endpoint" content="https://api.deepseek.example/v1/chat" />
 
   <!-- Ícone (data-uri) -->
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
@@ -84,14 +87,14 @@
     }
 
     .chat-header{padding:1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,0,60,0.05);flex:0 0 auto;}
-    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,0,60,0.12);}
+    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,0,60,0.15)}
     .assistant-avatar i{color:#fff;font-size:1.4rem}
     .assistant-info{display:flex;flex-direction:column}
     .assistant-name{font-family:var(--font-heading);color:var(--neon-red);font-size:1.05rem}
     .assistant-status{font-size:0.85rem;color:var(--text-tertiary)}
 
     .chat-body{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;}
-    .chat-messages{flex:1 1 auto;padding:1rem;overflow:auto;display:flex;flex-direction:column;gap:1rem;}
+    .chat-messages{flex:1 1 auto;padding:1rem 1rem 120px 1rem;overflow:auto;display:flex;flex-direction:column;gap:1rem;}
 
     .message{max-width:85%;padding:0.9rem;border-radius:14px;word-wrap:break-word}
     .message.ai{align-self:flex-start;background:linear-gradient(135deg,rgba(40,40,60,0.9),rgba(60,20,50,0.9));border:1px solid rgba(255,0,60,0.12)}
@@ -99,19 +102,25 @@
 
     .message .meta{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-tertiary);margin-bottom:0.5rem}
     .message .content{font-size:1rem;color:var(--text-secondary);line-height:1.5}
+    .message .content pre{white-space:pre-wrap;background:rgba(0,0,0,0.2);padding:0.7rem;border-radius:10px;color:var(--text-secondary);overflow:auto}
 
     /* Fixed input area at the bottom of the chat-wrapper for consistent mobile layout */
     .chat-input-area{
-      position:sticky; bottom:0; background:linear-gradient(180deg, rgba(12,12,12,0.5), rgba(0,0,0,0.65)); padding:0.75rem; display:flex;gap:0.5rem;align-items:center;border-top:1px solid rgba(255,0,60,0.04);flex:0 0 auto;
-      backdrop-filter: blur(6px);
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:18px; width:calc(100% - 2rem); max-width:1100px;
+      background:linear-gradient(180deg, rgba(12,12,12,0.85), rgba(0,0,0,0.75)); padding:0.6rem; display:flex;gap:0.5rem;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px); z-index:20;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
     }
 
     .chat-input{display:flex;gap:0.5rem;align-items:center;width:100%}
-    .chat-input textarea{resize:none;flex:1;padding:0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.4);color:var(--text-primary);min-height:44px;font-size:1rem;line-height:1.3}
+    .chat-input textarea{resize:none;flex:1;padding:0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.45);color:var(--text-primary);min-height:44px;font-size:1rem}
     .chat-input textarea:focus{outline:none;box-shadow:0 0 12px rgba(255,0,60,0.12);border-color:rgba(255,0,60,0.18)}
 
     .provider-select{margin-right:0.5rem;padding:0.45rem 0.6rem;border-radius:8px;background:rgba(0,0,0,0.4);color:var(--text-primary);border:1px solid rgba(255,255,255,0.03);font-weight:600}
-    .api-key-input{max-width:220px;padding:0.45rem 0.6rem;border-radius:8px;background:rgba(0,0,0,0.35);color:var(--text-secondary);border:1px solid rgba(255,255,255,0.03);font-size:0.95rem}
+    .api-key-group{display:flex;align-items:center;gap:0.4rem;margin-left:0.25rem}
+    .api-key-input{max-width:260px;padding:0.45rem 0.6rem;border-radius:8px;background:rgba(0,0,0,0.35);color:var(--text-secondary);border:1px solid rgba(255,255,255,0.03);font-size:0.95rem}
+    .api-actions{display:flex;align-items:center;gap:0.4rem;margin-left:0.5rem;color:var(--text-tertiary);font-size:0.85rem}
 
     .btn{
       background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));
@@ -121,6 +130,9 @@
     .btn:active{transform:translateY(1px);}
     .btn[disabled]{opacity:0.6;cursor:not-allowed;transform:none}
 
+    .icon-btn{
+      background:transparent;border:1px solid rgba(255,255,255,0.04);padding:0.4rem;border-radius:10px;color:var(--text-tertiary);cursor:pointer;
+    }
     .typing {display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff6a98;box-shadow:0 0 10px rgba(255,0,60,0.4);animation: typingDots 1s infinite;}
     @keyframes typingDots {0% { transform: translateY(0); opacity: 0.7; }50% { transform: translateY(-3px); opacity: 1; }100% { transform: translateY(0); opacity: 0.7; }}
 
@@ -132,6 +144,8 @@
       .api-key-input{max-width:140px}
       .btn{min-width:48px;min-height:48px}
       .message{max-width:92%}
+      .chat-input-area{left:12px;transform:none;width:calc(100% - 24px);max-width:none}
+      .chat-messages{padding-bottom:220px}
     }
   </style>
 </head>
@@ -170,25 +184,30 @@
               <div class="content">Olá! Eu sou a Ellen Joe. Pergunte-me qualquer coisa ou diga "ajuda" para começar.</div>
             </div>
           </div>
-
-          <div class="chat-input-area" role="form" aria-label="Enviar mensagem">
-            <div class="chat-input" style="width:100%">
-              <textarea id="chatInput" placeholder="Escreva uma mensagem... (Enter envia, Shift+Enter nova linha)" rows="1" aria-label="Mensagem"></textarea>
-
-              <!-- Provider simplified: only DeepSeek as requested -->
-              <select id="providerSelect" class="provider-select" title="Provedor IA" aria-label="Provedor IA">
-                <option value="deepseek">DeepSeek</option>
-              </select>
-
-              <!-- API Key input (optional) - user asked to "deixa pra colocar API kay" -->
-              <input id="apiKeyInput" class="api-key-input" type="password" placeholder="DeepSeek API Key (opcional)" aria-label="Chave DeepSeek"/>
-
-              <button id="sendBtn" class="btn" aria-label="Enviar mensagem"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-          </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Fixed input area -->
+  <div class="chat-input-area" role="form" aria-label="Enviar mensagem">
+    <div class="chat-input" style="width:100%">
+      <textarea id="chatInput" placeholder="Escreva uma mensagem... (Enter envia, Shift+Enter nova linha)" rows="1" aria-label="Mensagem"></textarea>
+
+      <select id="providerSelect" class="provider-select" title="Provedor IA" aria-label="Provedor IA">
+        <option value="deepseek">DeepSeek</option>
+      </select>
+
+      <div class="api-key-group" title="DeepSeek API Key">
+        <input id="apiKeyInput" class="api-key-input" type="password" placeholder="DeepSeek API Key (opcional)" aria-label="Chave DeepSeek"/>
+        <button id="toggleApiKey" class="icon-btn" title="Mostrar/ocultar chave" aria-label="Mostrar/ocultar chave"><i class="fa-regular fa-eye"></i></button>
+        <label class="api-actions" title="Salvar chave localmente">
+          <input id="saveApiKeyCheckbox" type="checkbox" style="margin-right:6px">Salvar
+        </label>
+      </div>
+
+      <button id="sendBtn" class="btn" aria-label="Enviar mensagem"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
   </div>
 
   <script>
@@ -198,30 +217,54 @@
       const sendBtn = document.getElementById('sendBtn');
       const providerSelect = document.getElementById('providerSelect');
       const apiKeyInput = document.getElementById('apiKeyInput');
+      const toggleApiKey = document.getElementById('toggleApiKey');
+      const saveApiKeyCheckbox = document.getElementById('saveApiKeyCheckbox');
 
       const PROXY_ENDPOINT = document.querySelector('meta[name="ai-proxy-endpoint"]').content || '/api/ai';
+      const DEEPSEEK_ENDPOINT = document.querySelector('meta[name="deepseek-endpoint"]').content || 'https://api.deepseek.example/v1/chat';
 
       // restore saved api key (stored locally if user chooses)
       try {
         const savedKey = localStorage.getItem('deepseek_api_key');
-        if(savedKey) apiKeyInput.value = savedKey;
+        const savedSaveFlag = localStorage.getItem('deepseek_save_flag') === '1';
+        if(savedKey){ apiKeyInput.value = savedKey; saveApiKeyCheckbox.checked = savedSaveFlag; }
       } catch(e){ /* ignore localStorage errors */ }
 
       function saveApiKeyIfNeeded(){
         try{
-          if(apiKeyInput.value && apiKeyInput.value.trim()){
+          if(saveApiKeyCheckbox.checked && apiKeyInput.value && apiKeyInput.value.trim()){
             localStorage.setItem('deepseek_api_key', apiKeyInput.value.trim());
+            localStorage.setItem('deepseek_save_flag', '1');
           } else {
             localStorage.removeItem('deepseek_api_key');
+            localStorage.removeItem('deepseek_save_flag');
           }
         }catch(e){}
       }
+
+      toggleApiKey.addEventListener('click', function(){
+        if(apiKeyInput.type === 'password'){
+          apiKeyInput.type = 'text';
+          toggleApiKey.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+        } else {
+          apiKeyInput.type = 'password';
+          toggleApiKey.innerHTML = '<i class="fa-regular fa-eye"></i>';
+        }
+      });
+
+      // save checkbox changes
+      saveApiKeyCheckbox.addEventListener('change', saveApiKeyIfNeeded);
+      apiKeyInput.addEventListener('blur', saveApiKeyIfNeeded);
 
       function autoScroll(){ requestAnimationFrame(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }); }
 
       function formatTime(date){ return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }
 
-      function createMessageElement({who, text, isTemporary=false}){
+      function escapeHtml(s){
+        return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      function createMessageElement({who, text, isTemporary=false, isPre=false}){
         const msg = document.createElement('div');
         msg.className = 'message ' + (who === 'user' ? 'user' : 'ai');
         if(isTemporary) msg.dataset.temp = '1';
@@ -230,9 +273,14 @@
         meta.innerHTML = '<div>' + (who === 'user' ? 'Você' : 'Ellen Joe') + '</div><div>' + formatTime(new Date()) + '</div>';
         const content = document.createElement('div');
         content.className = 'content';
-        // Escape HTML but allow basic line breaks and a typing indicator span if present
-        const safe = (text || '').replace(/&/g,'&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        content.innerHTML = safe.replace(/\n/g, '<br>');
+        if(isPre){
+          const pre = document.createElement('pre');
+          pre.innerHTML = escapeHtml(text);
+          content.appendChild(pre);
+        } else {
+          // allow basic line breaks and basic inline HTML left out on purpose
+          content.innerHTML = escapeHtml(text).replace(/\n/g,'<br>');
+        }
         msg.appendChild(meta);
         msg.appendChild(content);
         return msg;
@@ -249,17 +297,16 @@
 
       function setLoading(isLoading){
         if(isLoading){
-          sendBtn.disabled = true; chatInput.disabled = true; apiKeyInput.disabled = true; providerSelect.disabled = true;
+          sendBtn.disabled = true; chatInput.disabled = true; apiKeyInput.disabled = true; providerSelect.disabled = true; toggleApiKey.disabled = true; saveApiKeyCheckbox.disabled = true;
           // append a single temporary typing message
           removeTempMessages();
-          const typingMsg = createMessageElement({who:'ai', text:'<span class="typing" aria-hidden="true"></span> Pensando...', isTemporary:true});
-          // allow the typing span to be rendered (we inserted as escaped text, so replace)
+          const typingMsg = createMessageElement({who:'ai', text:'Pensando...', isTemporary:true});
           const content = typingMsg.querySelector('.content');
           content.innerHTML = '<span class="typing" aria-hidden="true"></span> Pensando...';
           chatMessages.appendChild(typingMsg);
           autoScroll();
         } else {
-          sendBtn.disabled = false; chatInput.disabled = false; apiKeyInput.disabled = false; providerSelect.disabled = false;
+          sendBtn.disabled = false; chatInput.disabled = false; apiKeyInput.disabled = false; providerSelect.disabled = false; toggleApiKey.disabled = false; saveApiKeyCheckbox.disabled = false;
           removeTempMessages();
         }
       }
@@ -286,23 +333,22 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         }, 25000);
-        if(!resp.ok){
-          // try to include a helpful message from server
-          let t;
-          try { t = await resp.text(); } catch(e){ t = ''; }
-          throw new Error('Proxy error: ' + resp.status + (t ? ' - ' + t : ''));
-        }
-        // try parse json safely
-        let json;
-        try {
-          json = await resp.json();
-        } catch(e){
-          const txt = await resp.text().catch(()=> '');
-          throw new Error('Resposta inválida do proxy: ' + txt);
-        }
-        // flexible fields
-        const reply = json.reply || json.output || json.message || '';
-        return reply;
+        return resp;
+      }
+
+      // NOTE: direct calls to provider expose API key in client (use with caution).
+      // Adjust DEEPSEEK_ENDPOINT and payload shape to match the real provider API.
+      async function sendToDeepseekDirect(text, apiKey){
+        const payload = { input: text };
+        const resp = await fetchWithTimeout(DEEPSEEK_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': apiKey ? ('Bearer ' + apiKey) : ''
+          },
+          body: JSON.stringify(payload)
+        }, 30000);
+        return resp;
       }
 
       async function sendToAssistant(text){
@@ -315,66 +361,28 @@
         try {
           let reply = '';
           try {
-            reply = await sendToProxy(text, provider, apiKey);
-          } catch (err) {
-            console.error('Erro no proxy:', err);
-            // present user friendly and somewhat detailed error message
-            reply = 'Desculpe, não consegui conversar com o provedor de IA agora. ' + (err && err.message ? ('Detalhes: ' + err.message) : '');
-          }
-          appendMessage({who:'ai', text: reply});
-        } finally {
-          setLoading(false);
-        }
-      }
-
-      function handleSend(){
-        const text = chatInput.value;
-        if(!text || !text.trim()) return;
-        appendMessage({who: 'user', text});
-        chatInput.value = '';
-        chatInput.style.height = ''; // reset autosize
-        sendToAssistant(text);
-      }
-
-      // autosize textarea
-      function autoSizeTextarea(){
-        chatInput.style.height = 'auto';
-        const scroll = chatInput.scrollHeight;
-        chatInput.style.height = (Math.min(scroll, 240)) + 'px';
-      }
-
-      sendBtn.addEventListener('click', handleSend);
-      chatInput.addEventListener('input', autoSizeTextarea);
-      chatInput.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' && !e.shiftKey){
-          e.preventDefault();
-          handleSend();
-        }
-      });
-
-      // save api key when user changes value
-      apiKeyInput.addEventListener('change', saveApiKeyIfNeeded);
-      apiKeyInput.addEventListener('blur', saveApiKeyIfNeeded);
-
-      // ensure welcome message isn't duplicated on hot reloads (if inserted server-side), keep single
-      (function dedupeWelcome(){
-        const welcomes = chatMessages.querySelectorAll('[data-seed="welcome"]');
-        if(welcomes.length > 1){
-          for(let i=1;i<welcomes.length;i++) welcomes[i].remove();
-        }
-      })();
-
-      // initial focus
-      chatInput.focus();
-      autoSizeTextarea();
-      autoScroll();
-
-      // expose a small debug helper when running locally (optional)
-      window.__ellenjoe_debug = {
-        appendMessage: (m) => appendMessage(m),
-        removeTempMessages,
-      };
-    })();
-  </script>
-</body>
-        </html>
+            // try proxy first
+            const resp = await sendToProxy(text, provider, apiKey);
+            if(!resp.ok){
+              // If proxy returns 405 (Not Allowed) or HTML page, try direct if we have API key
+              const ct = resp.headers.get('content-type') || '';
+              const status = resp.status;
+              let bodyText = '';
+              try { bodyText = await resp.text(); } catch(e) { bodyText = ''; }
+              // If direct fallback is available, attempt it
+              if(apiKey && (status === 405 || (ct.indexOf('text/html') !== -1 && bodyText))){
+                // attempt direct provider call
+                try {
+                  const directResp = await sendToDeepseekDirect(text, apiKey);
+                  if(!directResp.ok){
+                    // try to get text for helpful message
+                    let dt = '';
+                    try { dt = await directResp.text(); } catch(e) { dt = ''; }
+                    throw new Error('Chamada direta falhou: ' + directResp.status + (dt ? ' - ' + dt : ''));
+                  }
+                  // parse json or text
+                  let json;
+                  try { json = await directResp.json(); } catch(e){ json = null; }
+                  reply = (json && (json.reply || json.output || json.message)) || (await directResp.text()) || '';
+                } catch (innerErr){
+                  console.error('Erro na chamada
