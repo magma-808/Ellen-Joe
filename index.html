@@ -13,6 +13,13 @@
   <meta property="og:description" content="Converse com a Ellen Joe, IA completa com personalidade do universo ZZZ" />
   <meta property="og:type" content="website" />
 
+  <!-- DEEPSEEK CONFIG
+       - Para testes locais você pode colocar sua chave aqui (não recomendado em produção).
+       - Recomendado: criar um proxy server (ex.: /api/deepseek) que injete a chave do servidor (veja exemplo server/proxy.js).
+       - Substitua DEEPSEEK_ENDPOINT pelo endpoint correto fornecido pela DeepSeek. -->
+  <meta name="deepseek-endpoint" content="https://api.deepseek.example/v1/chat" />
+  <meta name="deepseek-api-key" content="" />
+
   <!-- Ícone (data-uri) -->
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
 
@@ -91,7 +98,7 @@
     .chat-header{
       padding:1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,0,60,0.05);
     }
-    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-red)}
+    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(255,0,60,0.25)}
     .assistant-avatar i{color:#fff;font-size:1.4rem}
     .assistant-info{display:flex;flex-direction:column}
     .assistant-name{font-family:var(--font-heading);color:var(--neon-red);font-size:1.05rem}
@@ -122,6 +129,20 @@
       box-shadow:var(--glow-red);transition:var(--transition-normal);
     }
     .btn:active{transform:translateY(1px);}
+
+    .btn[disabled]{opacity:0.6;cursor:not-allowed;transform:none}
+
+    /* Typing indicator style */
+    .typing {
+      display:inline-block;
+      width:10px;height:10px;border-radius:50%;background:#ff6a98;box-shadow:0 0 10px rgba(255,0,60,0.4);
+      animation: typingDots 1s infinite;
+    }
+    @keyframes typingDots {
+      0% { transform: translateY(0); opacity: 0.7; }
+      50% { transform: translateY(-3px); opacity: 1; }
+      100% { transform: translateY(0); opacity: 0.7; }
+    }
 
     /* Responsive */
     @media (max-width:900px){
@@ -177,11 +198,14 @@
   </div>
 
   <script>
-    // Código JS simples para tornar a interface funcional localmente
+    // Código JS para integrar com DeepSeek (ou usar fallback local)
     (function(){
       const chatMessages = document.getElementById('chatMessages');
       const chatInput = document.getElementById('chatInput');
       const sendBtn = document.getElementById('sendBtn');
+
+      const DEEPSEEK_ENDPOINT = document.querySelector('meta[name="deepseek-endpoint"]').content;
+      const DEEPSEEK_KEY = document.querySelector('meta[name="deepseek-api-key"]').content.trim();
 
       function autoScroll(){
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -191,34 +215,137 @@
         return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
       }
 
-      function appendMessage({who, text}){
+      function appendMessage({who, text, isTemporary=false}){
         const msg = document.createElement('div');
         msg.className = 'message ' + (who === 'user' ? 'user' : 'ai');
+        if(isTemporary) msg.dataset.temp = '1';
         const meta = document.createElement('div');
         meta.className = 'meta';
         meta.innerHTML = '<div>' + (who === 'user' ? 'Você' : 'Ellen Joe') + '</div><div>' + formatTime(new Date()) + '</div>';
         const content = document.createElement('div');
         content.className = 'content';
-        // Preserve simple formatting (line breaks)
         content.innerHTML = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
         msg.appendChild(meta);
         msg.appendChild(content);
         chatMessages.appendChild(msg);
         autoScroll();
+        return msg;
       }
 
-      // Simula resposta da IA (placeholder). Integre sua API aqui conforme necessário.
-      async function sendToAssistant(text){
-        // Exemplo: resposta automática simples
+      // Remove mensagens temporárias (ex.: "Pensando...")
+      function removeTempMessages(){
+        const temps = chatMessages.querySelectorAll('[data-temp="1"]');
+        temps.forEach(t => t.remove());
+      }
+
+      function setLoading(isLoading){
+        if(isLoading){
+          sendBtn.disabled = true;
+          chatInput.disabled = true;
+          // indicador visual
+          appendMessage({who:'ai', text: '<span class="typing" aria-hidden="true"></span> Pensando...', isTemporary:true});
+        } else {
+          sendBtn.disabled = false;
+          chatInput.disabled = false;
+          removeTempMessages();
+        }
+      }
+
+      function extractDeepSeekText(json){
+        // Tenta extrair a resposta de diferentes formatos comuns:
+        // - { choices: [ { message: { content: "..." } } ] }
+        // - { output: [ { content: "..." } ] }
+        // - { data: { text: "..." } }
+        // => Ajuste conforme doc do DeepSeek se souber o formato exato.
+        try {
+          if(json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content) {
+            return json.choices[0].message.content;
+          }
+          if(json.choices && json.choices[0] && json.choices[0].text) {
+            return json.choices[0].text;
+          }
+          if(json.output && Array.isArray(json.output) && json.output[0] && (json.output[0].content || json.output[0].text)) {
+            return json.output[0].content || json.output[0].text;
+          }
+          if(json.data && typeof json.data === 'object') {
+            if(json.data.text) return json.data.text;
+            if(json.data.output) return JSON.stringify(json.data.output);
+          }
+          // fallback: stringify (último recurso)
+          return JSON.stringify(json);
+        } catch (e) {
+          return 'Erro ao interpretar resposta da IA.';
+        }
+      }
+
+      // Chama a API DeepSeek (ou proxy). Ajuste o payload conforme a API real do DeepSeek.
+      async function callDeepSeekAPI(userText){
+        // OBS: você deve substituir o endpoint e o body conforme a documentação oficial do DeepSeek.
+        const endpoint = DEEPSEEK_ENDPOINT || '/api/deepseek';
+        const isUsingDirectKey = !!DEEPSEEK_KEY;
+
+        const headers = {'Content-Type': 'application/json'};
+        if(isUsingDirectKey){
+          headers['Authorization'] = 'Bearer ' + DEEPSEEK_KEY;
+        }
+
+        const body = {
+          // Exemplo genérico; ajuste 'model' / 'messages' / 'input' conforme doc real do DeepSeek
+          model: 'default',
+          input: userText,
+          // adicione configuração extra se necessário
+        };
+
+        const resp = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body)
+        });
+
+        if(!resp.ok){
+          const text = await resp.text();
+          throw new Error('Erro na API: ' + resp.status + ' - ' + text);
+        }
+
+        const json = await resp.json();
+        return extractDeepSeekText(json);
+      }
+
+      // Simulação local (fallback quando não há chave/endpoint configurado)
+      async function localFallbackResponse(text){
         const lower = text.trim().toLowerCase();
         let reply = "Desculpe, não entendi. Tente novamente.";
         if(!lower) return;
         if(lower.includes('olá')||lower.includes('oi')) reply = "Olá! Em que posso ajudar hoje?";
         else if(lower.includes('ajuda')) reply = "Posso responder perguntas, contar sobre o universo ZZZ, ou simular diálogos. O que deseja?";
         else reply = "Recebi: " + text;
-        // Simular atraso
         await new Promise(r => setTimeout(r, 350));
-        appendMessage({who: 'ai', text: reply});
+        return reply;
+      }
+
+      async function sendToAssistant(text){
+        if(!text || !text.trim()) return;
+        setLoading(true);
+        try {
+          // Se endpoint e chave vazia mas endpoint aponta para /api/deepseek (proxy), isso funcionará via proxy
+          let reply;
+          // Se a meta contém uma chave/endpoint real, tenta usar diretamente
+          if((DEEPSEEK_ENDPOINT && DEEPSEEK_ENDPOINT.indexOf('example') === -1) && (DEEPSEEK_KEY || DEEPSEEK_ENDPOINT.startsWith('/'))){
+            try {
+              reply = await callDeepSeekAPI(text);
+            } catch (err) {
+              console.error('Erro ao chamar DeepSeek:', err);
+              // fallback para mensagem de erro amigável
+              reply = 'Desculpe, não foi possível obter resposta da IA no momento.';
+            }
+          } else {
+            // fallback local quando não existe chave/endpoint real configurado
+            reply = await localFallbackResponse(text);
+          }
+          appendMessage({who: 'ai', text: reply});
+        } finally {
+          setLoading(false);
+        }
       }
 
       function handleSend(){
@@ -244,4 +371,4 @@
     })();
   </script>
 </body>
-    </html>
+  </html>
