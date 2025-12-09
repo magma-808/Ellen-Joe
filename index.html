@@ -39,13 +39,13 @@
     .container{max-width:1200px;margin:0 auto;padding:16px;height:100vh;display:flex;flex-direction:column}
     header.header{display:flex;align-items:center;justify-content:space-between;padding:6px 0 14px 0;flex:0 0 auto}
     .logo{display:flex;align-items:center;gap:12px}
-    .logo-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));box-shadow:var(--glow-red)}
+    .logo-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));box-shadow:var(--glow-red);font-size:22px}
     .logo-title{font-family:var(--font-heading);font-size:18px;background:linear-gradient(45deg,var(--neon-red),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
     .main{display:flex;flex:1;gap:18px;align-items:stretch;min-height:0}
-    .chat-wrapper{flex:1;display:flex;flex-direction:column;border-radius:var(--border-radius-lg);background:var(--bg-card);border:1px solid rgba(255,0,60,0.06);box-shadow:0 12px 30px rgba(0,0,0,0.6);overflow:hidden;position:relative}
+    .chat-wrapper{flex:1;display:flex;flex-direction:column;border-radius:var(--border-radius-lg);background:var(--bg-card);border:1px solid rgba(255,0,60,0.06);box-shadow:0 12px 30px rgba(0,0,0,0.6);overflow:hidden}
     .chat-header{padding:14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,0,60,0.04);flex:0 0 auto}
-    .assistant-avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+    .assistant-avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(255,0,60,0.15);font-size:22px}
     .assistant-name{font-family:var(--font-heading);color:var(--neon-pink);font-size:1.05rem}
     .assistant-status{font-size:0.85rem;color:var(--text-tertiary)}
 
@@ -57,13 +57,14 @@
     .meta{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-tertiary);margin-bottom:8px}
     .content{font-size:0.98rem;color:var(--text-secondary);line-height:1.45}
 
-    .chat-input-area{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;width:calc(100% - 32px);max-width:1100px;background:linear-gradient(180deg, rgba(12,12,12,0.92), rgba(0,0,0,0.78));padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,0.025);backdrop-filter:blur(6px);z-index:30;box-shadow:0 12px 30px rgba(0,0,0,0.6);display:flex;gap:10px;align-items:center;}
-    textarea#chatInput{resize:none;flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.45);color:var(--text-primary);min-height:46px;font-size:15px;line-height:1.3}
+    .chat-input-area{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;width:calc(100% - 32px);max-width:1100px;background:linear-gradient(180deg, rgba(12,12,12,0.92), rgba(0,0,0,0.78));padding:12px;border-radius:12px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+    .chat-input{display:flex;align-items:center;gap:8px;width:100%}
+    textarea#chatInput{resize:none;flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.45);color:var(--text-primary);min-height:46px;font-size:15px;line-height:1.2}
     .provider-select{padding:8px 10px;border-radius:10px;background:rgba(0,0,0,0.42);color:var(--text-primary);border:1px solid rgba(255,255,255,0.03);font-weight:600}
     .api-key-input{max-width:300px;padding:8px;border-radius:10px;background:rgba(0,0,0,0.35);color:var(--text-secondary);border:1px solid rgba(255,255,255,0.03);font-size:14px}
     .icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:var(--text-tertiary);cursor:pointer}
-    .btn{background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));color:#fff;border:none;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;box-shadow:var(--glow-red);transition:all 0.22s;display:inline-flex;align-items:center;justify-content:center;min-width:56px}
-    .btn[disabled]{opacity:0.6;cursor:not-allowed}
+    .btn{background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));color:#fff;border:none;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;box-shadow:var(--glow-red);transition:transform .08s ease}
+    .btn[disabled]{opacity:0.6;cursor:not-allowed;transform:none}
     .small {font-size:12px;color:var(--text-tertiary)}
     .generator {display:flex;align-items:center;gap:8px}
 
@@ -91,7 +92,7 @@
       <!-- Generator controls -->
       <div class="generator" title="Gerar HTML gigante">
         <label class="small" for="sizeMb">Tamanho (MB):</label>
-        <input id="sizeMb" type="number" value="1" min="0.1" step="0.1" style="width:80px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.4);color:var(--text-primary)"/>
+        <input id="sizeMb" type="number" value="1" min="0.1" step="0.1" style="width:80px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.4);color:var(--text-secondary)" />
         <button id="generateBtn" class="btn" title="Gerar e baixar um HTML com este tamanho (MB)">Gerar & Baixar</button>
       </div>
     </header>
@@ -149,8 +150,8 @@
     const sizeMbInput = document.getElementById('sizeMb');
     const generateBtn = document.getElementById('generateBtn');
 
-    const PROXY_ENDPOINT = document.querySelector('meta[name="ai-proxy-endpoint"]').content || '/api/ai';
-    const DEEPSEEK_ENDPOINT = document.querySelector('meta[name="deepseek-endpoint"]').content || '';
+    const PROXY_ENDPOINT = (document.querySelector('meta[name="ai-proxy-endpoint"]') && document.querySelector('meta[name="ai-proxy-endpoint"]').content) || '/api/ai';
+    const DEEPSEEK_ENDPOINT = (document.querySelector('meta[name="deepseek-endpoint"]') && document.querySelector('meta[name="deepseek-endpoint"]').content) || '';
 
     /* === small utilities === */
     function formatTime(date){ return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
@@ -173,8 +174,7 @@
       if(on){
         sendBtn.disabled = true; chatInput.disabled = true; providerSelect.disabled = true; apiKeyInput.disabled = true; toggleApiKey.disabled = true;
         removeTempMessages();
-        const m = createMessageElement({who:'ai', text:'', isTemporary:true});
-        m.querySelector('.content').innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff6a98;box-shadow:0 0 10px rgba(255,0,60,0.4);animation:1s infinite alternate;"></span> Pensando...';
+        const m = createMessageElement({who:'ai', text:'...', isTemporary:true});
         chatMessages.appendChild(m); chatMessages.scrollTop = chatMessages.scrollHeight;
       } else {
         sendBtn.disabled = false; chatInput.disabled = false; providerSelect.disabled = false; apiKeyInput.disabled = false; toggleApiKey.disabled = false;
@@ -183,14 +183,16 @@
     }
 
     // Toggle key visibility
-    toggleApiKey.addEventListener('click', () => {
-      if(apiKeyInput.type === 'password'){ apiKeyInput.type = 'text'; toggleApiKey.innerHTML = '<i class="fa-regular fa-eye-slash"></i>'; }
-      else { apiKeyInput.type = 'password'; toggleApiKey.innerHTML = '<i class="fa-regular fa-eye"></i>'; }
-    });
+    if(toggleApiKey){
+      toggleApiKey.addEventListener('click', () => {
+        if(apiKeyInput.type === 'password'){ apiKeyInput.type = 'text'; toggleApiKey.innerHTML = '<i class="fa-regular fa-eye-slash"></i>'; }
+        else { apiKeyInput.type = 'password'; toggleApiKey.innerHTML = '<i class="fa-regular fa-eye"></i>'; }
+      });
+    }
 
     // Autosize textarea
     function autosize(){ chatInput.style.height = 'auto'; chatInput.style.height = Math.min(300, chatInput.scrollHeight) + 'px'; }
-    chatInput.addEventListener('input', autosize); autosize();
+    if(chatInput){ chatInput.addEventListener('input', autosize); autosize(); }
 
     // Simple local fallback "bot"
     const LocalBot = (function(){
@@ -298,14 +300,15 @@
       }
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
+    // Attach send handlers (defensive)
+    if(sendBtn){ sendBtn.addEventListener('click', sendMessage); }
+    if(chatInput){ chatInput.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); } }); }
 
     // Load saved key
     try { const s = localStorage.getItem('ellenjoe_api_key_v1'); if(s) apiKeyInput.value = s; } catch(e){}
 
     // Focus and scroll
-    chatInput.focus();
+    if(chatInput) chatInput.focus();
 
     /* === Generator: cria e baixa um HTML funcional grande (inserindo comentário grande) === */
     function downloadBlob(filename, blob){
@@ -317,7 +320,6 @@
       setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 15000);
     }
 
-    generateBtn.addEventListener('click', async function(){
-      const mb = Math.max(0.1, parseFloat(sizeMbInput.value) || 1);
-      const target = Math.round(mb * 1024 * 1024); // bytes
-      generateBtn.disabled = true
+    // Robust generator: builds a small valid HTML and pads with a large HTML comment until target size
+    function buildLargeHtml(targetBytes){
+      const header = '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>La
