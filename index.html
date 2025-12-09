@@ -13,20 +13,16 @@
   <meta property="og:description" content="Converse com a Ellen Joe, IA completa com personalidade do universo ZZZ" />
   <meta property="og:type" content="website" />
 
-  <!-- DEEPSEEK CONFIG
-       - Para testes locais você pode colocar sua chave aqui (não recomendado em produção).
-       - Recomendado: criar um proxy server (ex.: /api/deepseek) que injete a chave do servidor (veja exemplo server/proxy.js).
-       - Substitua DEEPSEEK_ENDPOINT pelo endpoint correto fornecido pela DeepSeek. -->
-  <meta name="deepseek-endpoint" content="https://api.deepseek.example/v1/chat" />
-  <meta name="deepseek-api-key" content="" />
+  <!-- Observação: não coloque chaves no cliente. O front-end chama sempre /api/ai (proxy). -->
+  <meta name="ai-proxy-endpoint" content="/api/ai" />
 
   <!-- Ícone (data-uri) -->
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
 
-  <!-- Fontes (corrigido: link completo) -->
+  <!-- Fontes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -60,7 +56,6 @@
       overflow:hidden;
     }
 
-    /* Background subtle glows (non-blocking, z-index behind content) */
     .bg-layers{
       position:fixed; inset:0; z-index:-1; pointer-events:none;
       background:
@@ -70,11 +65,8 @@
       opacity:1;
     }
 
-    /* Container */
     .container{max-width:1200px;margin:0 auto;padding:1rem;height:100%;display:flex;flex-direction:column}
-    header.header{
-      display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1rem 0;
-    }
+    header.header{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1rem 0;}
     .logo{display:flex;align-items:center;gap:0.75rem}
     .logo-icon{
       width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -83,31 +75,22 @@
     .logo-icon i{font-size:1.4rem;color:#fff}
     .logo-title{font-family:var(--font-heading);font-size:1.25rem;background:linear-gradient(45deg,var(--neon-red),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-    /* Main area */
-    .main{
-      display:flex;flex:1;gap:1.5rem;align-items:stretch;
-      min-height:calc(100vh - 110px);
-    }
+    .main{display:flex;flex:1;gap:1.5rem;align-items:stretch;min-height:calc(100vh - 110px);}
 
-    /* Chat column */
     .chat-wrapper{
       flex:1;display:flex;flex-direction:column;border-radius:var(--border-radius-lg);
       background:var(--bg-card);border:1px solid rgba(255,0,60,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.5);overflow:hidden;
     }
 
-    .chat-header{
-      padding:1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,0,60,0.05);
-    }
-    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(255,0,60,0.25)}
+    .chat-header{padding:1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,0,60,0.05);}
+    .assistant-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,0,60,0.18);}
     .assistant-avatar i{color:#fff;font-size:1.4rem}
     .assistant-info{display:flex;flex-direction:column}
     .assistant-name{font-family:var(--font-heading);color:var(--neon-red);font-size:1.05rem}
     .assistant-status{font-size:0.85rem;color:var(--text-tertiary)}
 
     .chat-body{flex:1;display:flex;flex-direction:column;overflow:hidden}
-    .chat-messages{
-      flex:1;padding:1rem;overflow:auto;display:flex;flex-direction:column;gap:1rem;
-    }
+    .chat-messages{flex:1;padding:1rem;overflow:auto;display:flex;flex-direction:column;gap:1rem;}
 
     .message{max-width:85%;padding:0.9rem;border-radius:14px;word-wrap:break-word}
     .message.ai{align-self:flex-start;background:linear-gradient(135deg,rgba(40,40,60,0.9),rgba(60,20,50,0.9));border:1px solid rgba(255,0,60,0.12)}
@@ -116,40 +99,16 @@
     .message .meta{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-tertiary);margin-bottom:0.5rem}
     .message .content{font-size:1rem;color:var(--text-secondary);line-height:1.5}
 
-    /* Input area */
-    .chat-input{
-      display:flex;gap:0.5rem;padding:0.75rem;border-top:1px solid rgba(255,0,60,0.04);align-items:center;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);
-    }
-    .chat-input textarea{
-      resize:none;flex:1;padding:0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
-      background:rgba(0,0,0,0.4);color:var(--text-primary);min-height:44px;font-size:1rem;font-family:var(--font-body);
-    }
-    .btn{
-      background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));color:#fff;border:none;padding:0.6rem 1rem;border-radius:10px;cursor:pointer;font-weight:600;
-      box-shadow:var(--glow-red);transition:var(--transition-normal);
-    }
+    .chat-input{display:flex;gap:0.5rem;padding:0.75rem;border-top:1px solid rgba(255,0,60,0.04);align-items:center;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);}
+    .chat-input textarea{resize:none;flex:1;padding:0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.4);color:var(--text-primary);min-height:44px;font-size:1rem;font-family:var(--font-body);}
+    .btn{background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));color:#fff;border:none;padding:0.6rem 1rem;border-radius:10px;cursor:pointer;font-weight:600;box-shadow:var(--glow-red);transition:var(--transition-normal);}
     .btn:active{transform:translateY(1px);}
-
     .btn[disabled]{opacity:0.6;cursor:not-allowed;transform:none}
 
-    /* Typing indicator style */
-    .typing {
-      display:inline-block;
-      width:10px;height:10px;border-radius:50%;background:#ff6a98;box-shadow:0 0 10px rgba(255,0,60,0.4);
-      animation: typingDots 1s infinite;
-    }
-    @keyframes typingDots {
-      0% { transform: translateY(0); opacity: 0.7; }
-      50% { transform: translateY(-3px); opacity: 1; }
-      100% { transform: translateY(0); opacity: 0.7; }
-    }
+    .typing {display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff6a98;box-shadow:0 0 10px rgba(255,0,60,0.4);animation: typingDots 1s infinite;}
+    @keyframes typingDots {0% { transform: translateY(0); opacity: 0.7; }50% { transform: translateY(-3px); opacity: 1; }100% { transform: translateY(0); opacity: 0.7; }}
 
-    /* Responsive */
-    @media (max-width:900px){
-      .main{flex-direction:column;min-height:calc(100vh - 140px)}
-      .logo-title{font-size:1rem}
-      .assistant-name{font-size:1rem}
-    }
+    @media (max-width:900px){ .main{flex-direction:column;min-height:calc(100vh - 140px)} .logo-title{font-size:1rem} .assistant-name{font-size:1rem} }
   </style>
 </head>
 <body>
@@ -190,6 +149,11 @@
 
           <div class="chat-input" role="form" aria-label="Enviar mensagem">
             <textarea id="chatInput" placeholder="Escreva uma mensagem... (Enter envia, Shift+Enter nova linha)"></textarea>
+            <select id="providerSelect" title="Provedor IA" style="margin-right:0.5rem;padding:0.5rem;border-radius:8px;background:rgba(0,0,0,0.4);color:var(--text-primary);border:1px solid rgba(255,255,255,0.03);">
+              <option value="auto">Auto (configurado no servidor)</option>
+              <option value="deepseek">DeepSeek</option>
+              <option value="meta">Meta AI</option>
+            </select>
             <button id="sendBtn" class="btn" aria-label="Enviar mensagem"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
@@ -198,22 +162,17 @@
   </div>
 
   <script>
-    // Código JS para integrar com DeepSeek (ou usar fallback local)
     (function(){
       const chatMessages = document.getElementById('chatMessages');
       const chatInput = document.getElementById('chatInput');
       const sendBtn = document.getElementById('sendBtn');
+      const providerSelect = document.getElementById('providerSelect');
 
-      const DEEPSEEK_ENDPOINT = document.querySelector('meta[name="deepseek-endpoint"]').content;
-      const DEEPSEEK_KEY = document.querySelector('meta[name="deepseek-api-key"]').content.trim();
+      const PROXY_ENDPOINT = document.querySelector('meta[name="ai-proxy-endpoint"]').content || '/api/ai';
 
-      function autoScroll(){
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
+      function autoScroll(){ chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-      function formatTime(date){
-        return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-      }
+      function formatTime(date){ return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }
 
       function appendMessage({who, text, isTemporary=false}){
         const msg = document.createElement('div');
@@ -224,7 +183,8 @@
         meta.innerHTML = '<div>' + (who === 'user' ? 'Você' : 'Ellen Joe') + '</div><div>' + formatTime(new Date()) + '</div>';
         const content = document.createElement('div');
         content.className = 'content';
-        content.innerHTML = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        // Escape HTML but allow basic line breaks
+        content.innerHTML = (text || '').replace(/&/g,'&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
         msg.appendChild(meta);
         msg.appendChild(content);
         chatMessages.appendChild(msg);
@@ -232,117 +192,48 @@
         return msg;
       }
 
-      // Remove mensagens temporárias (ex.: "Pensando...")
-      function removeTempMessages(){
-        const temps = chatMessages.querySelectorAll('[data-temp="1"]');
-        temps.forEach(t => t.remove());
-      }
+      function removeTempMessages(){ const temps = chatMessages.querySelectorAll('[data-temp="1"]'); temps.forEach(t => t.remove()); }
 
       function setLoading(isLoading){
         if(isLoading){
-          sendBtn.disabled = true;
-          chatInput.disabled = true;
-          // indicador visual
+          sendBtn.disabled = true; chatInput.disabled = true;
           appendMessage({who:'ai', text: '<span class="typing" aria-hidden="true"></span> Pensando...', isTemporary:true});
         } else {
-          sendBtn.disabled = false;
-          chatInput.disabled = false;
+          sendBtn.disabled = false; chatInput.disabled = false;
           removeTempMessages();
         }
       }
 
-      function extractDeepSeekText(json){
-        // Tenta extrair a resposta de diferentes formatos comuns:
-        // - { choices: [ { message: { content: "..." } } ] }
-        // - { output: [ { content: "..." } ] }
-        // - { data: { text: "..." } }
-        // => Ajuste conforme doc do DeepSeek se souber o formato exato.
-        try {
-          if(json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content) {
-            return json.choices[0].message.content;
-          }
-          if(json.choices && json.choices[0] && json.choices[0].text) {
-            return json.choices[0].text;
-          }
-          if(json.output && Array.isArray(json.output) && json.output[0] && (json.output[0].content || json.output[0].text)) {
-            return json.output[0].content || json.output[0].text;
-          }
-          if(json.data && typeof json.data === 'object') {
-            if(json.data.text) return json.data.text;
-            if(json.data.output) return JSON.stringify(json.data.output);
-          }
-          // fallback: stringify (último recurso)
-          return JSON.stringify(json);
-        } catch (e) {
-          return 'Erro ao interpretar resposta da IA.';
-        }
-      }
-
-      // Chama a API DeepSeek (ou proxy). Ajuste o payload conforme a API real do DeepSeek.
-      async function callDeepSeekAPI(userText){
-        // OBS: você deve substituir o endpoint e o body conforme a documentação oficial do DeepSeek.
-        const endpoint = DEEPSEEK_ENDPOINT || '/api/deepseek';
-        const isUsingDirectKey = !!DEEPSEEK_KEY;
-
-        const headers = {'Content-Type': 'application/json'};
-        if(isUsingDirectKey){
-          headers['Authorization'] = 'Bearer ' + DEEPSEEK_KEY;
-        }
-
-        const body = {
-          // Exemplo genérico; ajuste 'model' / 'messages' / 'input' conforme doc real do DeepSeek
-          model: 'default',
-          input: userText,
-          // adicione configuração extra se necessário
-        };
-
-        const resp = await fetch(endpoint, {
+      async function sendToProxy(text, provider){
+        const payload = { input: text, provider }; // provider optional: 'deepseek' | 'meta' | 'auto'
+        const resp = await fetch(PROXY_ENDPOINT, {
           method: 'POST',
-          headers,
-          body: JSON.stringify(body)
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         });
-
         if(!resp.ok){
-          const text = await resp.text();
-          throw new Error('Erro na API: ' + resp.status + ' - ' + text);
+          const t = await resp.text();
+          throw new Error('Proxy error: ' + resp.status + ' - ' + t);
         }
-
+        // espera resposta JSON { reply: "texto..." }
         const json = await resp.json();
-        return extractDeepSeekText(json);
-      }
-
-      // Simulação local (fallback quando não há chave/endpoint configurado)
-      async function localFallbackResponse(text){
-        const lower = text.trim().toLowerCase();
-        let reply = "Desculpe, não entendi. Tente novamente.";
-        if(!lower) return;
-        if(lower.includes('olá')||lower.includes('oi')) reply = "Olá! Em que posso ajudar hoje?";
-        else if(lower.includes('ajuda')) reply = "Posso responder perguntas, contar sobre o universo ZZZ, ou simular diálogos. O que deseja?";
-        else reply = "Recebi: " + text;
-        await new Promise(r => setTimeout(r, 350));
-        return reply;
+        return json.reply || json.output || '';
       }
 
       async function sendToAssistant(text){
         if(!text || !text.trim()) return;
         setLoading(true);
         try {
-          // Se endpoint e chave vazia mas endpoint aponta para /api/deepseek (proxy), isso funcionará via proxy
+          let provider = providerSelect.value;
+          if(provider === 'auto') provider = undefined;
           let reply;
-          // Se a meta contém uma chave/endpoint real, tenta usar diretamente
-          if((DEEPSEEK_ENDPOINT && DEEPSEEK_ENDPOINT.indexOf('example') === -1) && (DEEPSEEK_KEY || DEEPSEEK_ENDPOINT.startsWith('/'))){
-            try {
-              reply = await callDeepSeekAPI(text);
-            } catch (err) {
-              console.error('Erro ao chamar DeepSeek:', err);
-              // fallback para mensagem de erro amigável
-              reply = 'Desculpe, não foi possível obter resposta da IA no momento.';
-            }
-          } else {
-            // fallback local quando não existe chave/endpoint real configurado
-            reply = await localFallbackResponse(text);
+          try {
+            reply = await sendToProxy(text, provider);
+          } catch (err) {
+            console.error('Erro no proxy:', err);
+            reply = 'Desculpe, não consegui conversar com o provedor de IA agora.';
           }
-          appendMessage({who: 'ai', text: reply});
+          appendMessage({who:'ai', text: reply});
         } finally {
           setLoading(false);
         }
@@ -353,7 +244,6 @@
         if(!text.trim()) return;
         appendMessage({who: 'user', text});
         chatInput.value = '';
-        // Chamar função de envio / API
         sendToAssistant(text);
       }
 
@@ -365,7 +255,6 @@
         }
       });
 
-      // Acessibilidade: foco inicial no campo de texto
       chatInput.focus();
       autoScroll();
     })();
